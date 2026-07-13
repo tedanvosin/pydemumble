@@ -2,6 +2,8 @@
 #include <nanobind/stl/string.h>
 #include <llvm/Demangle/Demangle.h>
 #include <swift/Demangling/Demangle.h>
+#include "rust_legacy_demangle.h"
+#include <cstdlib>
 #include <string>
 
 #define __PYDEMUMBLE_VERSION__ "0.0.1"
@@ -12,6 +14,11 @@ namespace pydemumble
 	{
 		size_t nUsed = func_name.length();
 		char* result = NULL;
+		if ((result = rustLegacyDemangle(func_name)) != NULL) {
+			std::string out(result);
+			free(result);
+			return out;
+		}
 		if (func_name.length() > 1 && (result = llvm::itaniumDemangle(func_name)) != NULL) {
 			return std::string(result);
 		}

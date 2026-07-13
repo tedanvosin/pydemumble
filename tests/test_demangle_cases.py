@@ -55,6 +55,58 @@ def test_rust_nested():
 	assert pydemumble.demangle("_RNvNvC5mylib3foo3bar") == "mylib::foo::bar"
 
 
+# --- Rust (legacy, pre-v0) ---
+
+def test_rust_legacy_print():
+	assert pydemumble.demangle("_ZN3std2io5stdio6_print17hc00c8cbe9793b80aE") == \
+		"std::io::stdio::_print"
+
+
+def test_rust_legacy_main():
+	assert pydemumble.demangle("_ZN4main17h05444b57a54e5c13E") == "main"
+
+
+def test_rust_legacy_generic():
+	assert pydemumble.demangle(
+		"_ZN71_$LT$Test$u20$$u2b$$u20$$u27$static$u20$as$u20$foo..Bar$LT$Test$GT$$GT$3bar17h1234567890abcdefE"
+	) == "<Test + 'static as foo::Bar<Test>>::bar"
+
+
+def test_rust_legacy_closure():
+	assert pydemumble.demangle("_ZN28_$u7b$$u7b$closure$u7d$$u7d$17h1234567890abcdefE") == \
+		"{{closure}}"
+
+
+def test_rust_legacy_ref():
+	assert pydemumble.demangle("_ZN5$RF$x17h1234567890abcdefE") == "&x"
+
+
+def test_rust_legacy_no_hash_with_escapes():
+	assert pydemumble.demangle("_ZN5$LT$x3fooE") == "<x::foo"
+
+
+def test_rust_legacy_escapes():
+	assert pydemumble.demangle("_ZN4$SP$17h1234567890abcdefE") == "@"
+	assert pydemumble.demangle("_ZN4$BP$17h1234567890abcdefE") == "*"
+	assert pydemumble.demangle("_ZN4$LP$17h1234567890abcdefE") == "("
+	assert pydemumble.demangle("_ZN4$RP$17h1234567890abcdefE") == ")"
+	assert pydemumble.demangle("_ZN3$C$17h1234567890abcdefE") == ","
+
+
+def test_rust_legacy_macos_underscore():
+	assert pydemumble.demangle("__ZN4main17h05444b57a54e5c13E") == "main"
+
+
+def test_rust_legacy_plain_cpp_falls_to_itanium():
+	# Plain C++ symbol must NOT match rust legacy; Itanium demangles it.
+	assert pydemumble.demangle("_ZN3foo3barE") == "foo::bar"
+
+
+def test_rust_legacy_hash_only_falls_to_itanium():
+	# Single hash-only segment rejected by rust legacy, falls to Itanium.
+	assert pydemumble.demangle("_ZN17h1234567890abcdefE") == "h1234567890abcdef"
+
+
 # --- Swift ---
 
 def test_swift_old_mangling():

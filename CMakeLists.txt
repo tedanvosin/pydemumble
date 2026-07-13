@@ -34,6 +34,7 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 include_directories(
+	src/rust_legacy
 	src/third_party/llvm/include
 	src/third_party/swift/include
 )
@@ -52,6 +53,7 @@ nanobind_add_module(
   STABLE_ABI
   NB_STATIC
 	src/pydemumble.cpp
+	src/rust_legacy/rust_legacy_demangle.cc
 	src/third_party/llvm/lib/Demangle/DLangDemangle.cpp
 	src/third_party/llvm/lib/Demangle/ItaniumDemangle.cpp
 	src/third_party/llvm/lib/Demangle/MicrosoftDemangle.cpp
